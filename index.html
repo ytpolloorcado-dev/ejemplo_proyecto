@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Portal de Asistencia | COVIA</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    :root {
+      --covia-navy-dark: #071647;
+      --covia-navy: #0e2569;
+      --covia-blue: #153c96;
+      --covia-blue-hover: #0f2c73;
+      --covia-steel: #4d78a6;
+      --covia-red: #c41212;
+      --covia-red-hover: #9e0d0d;
+      --bg-page: #f5f7fb;
+      --card-bg: #ffffff;
+      --text-main: #0f2356;
+      --text-muted: #5a6b8c;
+      --border-blue: #1b3f8b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(180deg, #ffffff 0%, #f1f5fb 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .topbar-wrapper {
+      padding: 12px 16px 0 16px;
+      width: 100%;
+    }
+
+    .topbar {
+      background: linear-gradient(90deg, #07174a 0%, #163d94 50%, #091d5c 100%);
+      height: 76px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(10, 30, 89, 0.22);
+    }
+
+    .topbar-title {
+      font-size: 1.05rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      opacity: 0.95;
+      min-width: 170px;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .topbar-logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .topbar-logo-brand {
+      font-size: 1.55rem;
+      font-weight: 800;
+      font-style: italic;
+      letter-spacing: 1px;
+      color: #ffffff;
+    }
+
+    .topbar-logo-sub {
+      font-size: 0.65rem;
+      font-style: italic;
+      color: #cbd8f6;
+      align-self: flex-end;
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      min-width: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+
+    .clock-pill {
+      font-size: 0.88rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 6px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      color: #e8effd;
+    }
+
+    .menu-icon {
+      width: 28px;
+      height: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0.9;
+    }
+
+    .menu-icon span {
+      display: block;
+      height: 3.5px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 4px;
+    }
+
+    .main-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px 48px 20px;
+    }
+
+    .kiosk-card {
+      width: 100%;
+      max-width: 680px;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 46px 40px 54px 40px;
+      box-shadow: 0 14px 40px rgba(14, 37, 105, 0.07);
+      border: 1px solid rgba(21, 60, 150, 0.08);
+      text-align: center;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .brand-hero {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 26px;
+      user-select: none;
+    }
+
+    .brand-hero-name {
+      font-size: 2.35rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: 1.5px;
+      color: #1c1f26;
+    }
+
+    .titulo-asistencia {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #0e2458;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .subtitulo-escanear {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #102a63;
+      margin-bottom: 10px;
+    }
+
+    .barra-decorativa {
+      width: 68px;
+      height: 5px;
+      background: #15459f;
+      border-radius: 10px;
+      margin: 0 auto 30px auto;
+    }
+
+    .form-checada {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 540px;
+      gap: 16px;
+      margin-bottom: 46px;
+      position: relative;
+    }
+
+    .input-empleado {
+      flex: 1;
+      height: 56px;
+      border: 2px solid var(--border-blue);
+      border-radius: 10px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-align: center;
+      padding: 0 20px;
+      outline: none;
+      background: #ffffff;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 10px rgba(21, 60, 150, 0.05);
+    }
+
+    .input-empleado::placeholder {
+      color: #8492a6;
+      font-weight: 500;
+    }
+
+    .input-empleado:focus {
+      border-color: #15459f;
+      box-shadow: 0 0 0 4px rgba(21, 69, 159, 0.15);
+    }
+
+    .btn-camara-scan {
+      width: 64px;
+      height: 56px;
+      border-radius: 12px;
+      border: 2px solid #d4dde8;
+      background: #f8fafd;
+      color: #667582;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      padding: 6px;
+    }
+
+    .btn-camara-scan:hover {
+      border-color: var(--covia-blue);
+      color: var(--covia-blue);
+      background: #eef3fc;
+      transform: translateY(-2px);
+    }
+
+    .btn-camara-scan:active {
+      transform: scale(0.96);
+    }
+
+    .botones-accion {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 44px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .btn-checar {
+      width: 225px;
+      height: 62px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.4px;
+    }
+
+    .btn-ingreso {
+      background: linear-gradient(180deg, #163f99 0%, #10317c 100%);
+      box-shadow: 0 8px 20px rgba(16, 49, 124, 0.28);
+    }
+
+    .btn-ingreso:hover:not(:disabled) {
+      background: linear-gradient(180deg, #1b49b0 0%, #13398e 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(16, 49, 124, 0.36);
+    }
+
+    .btn-salida {
+      background: linear-gradient(180deg, #d11515 0%, #b50d0d 100%);
+      box-shadow: 0 8px 20px rgba(181, 13, 13, 0.28);
+    }
+
+    .btn-salida:hover:not(:disabled) {
+      background: linear-gradient(180deg, #e01b1b 0%, #c41010 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(181, 13, 13, 0.36);
+    }
+
+    .btn-checar:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .btn-checar:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .mensaje-error-inline {
+      margin-top: 22px;
+      color: #c41212;
+      font-weight: 600;
+      font-size: 0.95rem;
+      min-height: 22px;
+    }
+
+    .pantalla-bloqueada-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #071647 0%, #133688 100%);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 430px;
+      border-radius: 20px;
+      padding: 38px 32px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .auth-card h3 {
+      color: var(--covia-navy);
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .auth-card p {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      margin-bottom: 24px;
+    }
+
+    .input-api-key {
+      width: 100%;
+      height: 50px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 0 16px;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .input-api-key:focus {
+      border-color: var(--covia-blue);
+    }
+
+    .btn-autorizar {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 10px;
+      background: var(--covia-blue);
+      color: #ffffff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-autorizar:hover {
+      background: var(--covia-blue-hover);
+    }
+
+    .auth-error {
+      color: var(--covia-red);
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    .pantalla-resultado {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 1500;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .pantalla-resultado.activa {
+      display: flex;
+    }
+
+    .resultado-logo {
+      margin-bottom: 54px;
+    }
+
+    .circulo-check {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 5px solid #091e5b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 42px;
+      animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .texto-resultado {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #142c66;
+      letter-spacing: 0.2px;
+    }
+
+    .modal-scanner {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 18, 58, 0.88);
+      backdrop-filter: blur(6px);
+      z-index: 1800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-scanner.activo {
+      display: flex;
+    }
+
+    .scanner-box {
+      background: #ffffff;
+      width: 96vw;
+      max-width: 1380px;
+      height: 92vh;
+      border-radius: 22px;
+      padding: 20px 24px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .scanner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .scanner-header h4 {
+      font-size: 1.4rem;
+      color: var(--covia-navy);
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-cerrar-scanner {
+      background: linear-gradient(180deg, #163f99 0%, #10317c 100%);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 1rem;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(16, 49, 124, 0.25);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-cerrar-scanner:hover {
+      background: linear-gradient(180deg, #1b49b0 0%, #13398e 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 49, 124, 0.35);
+    }
+
+    #lector-barras {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #050d26;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #lector-barras video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: 16px;
+    }
+
+    .scanner-hint {
+      margin-top: 14px;
+      font-size: 1.05rem;
+      color: var(--covia-navy);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    #camara-frontal,
+    #canvas-foto {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      bottom: 0;
+      right: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 0 16px;
+        height: 66px;
+      }
+      .topbar-title,
+      .clock-pill {
+        display: none;
+      }
+      .topbar-right {
+        min-width: auto;
+      }
+      .kiosk-card {
+        padding: 32px 20px 38px 20px;
+      }
+      .titulo-asistencia {
+        font-size: 1.45rem;
+      }
+      .botones-accion {
+        gap: 18px;
+      }
+      .btn-checar {
+        width: 100%;
+      }
+      .modal-scanner {
+        padding: 8px;
+      }
+      .scanner-box {
+        width: 98vw;
+        height: 95vh;
+        padding: 14px;
+        border-radius: 16px;
+      }
+      .scanner-header h4 {
+        font-size: 1.15rem;
+      }
+      .scanner-hint {
+        font-size: 0.92rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="pantalla-bloqueada" class="pantalla-bloqueada-overlay" style="display: none;">
+    <div class="auth-card">
+      <div class="brand-hero" style="margin-bottom: 18px;">
+        <svg width="52" height="52" viewBox="0 0 64 64" fill="none">
+          <path d="M44 14C33.5 9.5 20.5 14 15.5 24.5C10.5 35 15 47.5 25.5 52.5C33.5 56.2 42.8 54.2 48.5 48" stroke="#4d78a6" stroke-width="6.5" stroke-linecap="round"/>
+          <path d="M49 20C41 12.5 28 13.5 21 22C14 30.5 15.5 43 24 50C31 55.5 41 55 47.5 49" stroke="#1b2b6b" stroke-width="5.5" stroke-linecap="round"/>
+          <path d="M45 24C39.5 19.5 31 20.5 26.5 26C22 31.5 23 39.5 28.5 44C33.5 48 40.5 47.5 45 43" stroke="#1b2b6b" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-hero-name" style="font-size: 1.9rem;">COVIA</span>
+      </div>
+      <h3>Autorización de Kiosco</h3>
+      <p>Ingresa la API Key de esta tablet por única vez para habilitar el checador.</p>
+      <form id="form-api-key" onsubmit="guardarYValidarClave(event)">
+        <input
+          type="password"
+          id="input-api-key"
+          class="input-api-key"
+          placeholder="Clave de autorización"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="btn-autorizar" class="btn-autorizar">Vincular Dispositivo</button>
+      </form>
+      <div id="auth-error" class="auth-error"></div>
+    </div>
+  </div>
+
+  <div id="pantalla-checador" style="display: none; flex-direction: column; min-height: 100vh;">
+    <div class="topbar-wrapper">
+      <header class="topbar">
+        <div class="topbar-title">Portal de Asistencia</div>
+        <div class="topbar-logo">
+          <svg width="42" height="42" viewBox="0 0 64 64" fill="none">
+            <path d="M45 14C34 9 20.5 13.5 15.5 24.5C10.5 35.5 15 48 26 53C34 56.5 43 54.5 49 48" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+            <path d="M47 22C40 16 29.5 17 23.5 24.5C17.5 32 19 42.5 26.5 48.5C32.5 53 41 52.5 46.5 47" stroke="#cbd8f6" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <div class="topbar-logo-text">
+            <span class="topbar-logo-brand">COVIA</span>
+            <span class="topbar-logo-sub">RRHH Software</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <span id="reloj-vivo" class="clock-pill">--:--:--</span>
+          <div class="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <main class="main-container">
+      <section class="kiosk-card">
+        <div class="brand-hero">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <path d="M44 14C33.5 9.5 20.5 14 15.5 24.5C10.5 35 15 47.5 25.5 52.5C33.5 56.2 42.8 54.2 48.5 48" stroke="#4d78a6" stroke-width="6.5" stroke-linecap="round"/>
+            <path d="M49 20C41 12.5 28 13.5 21 22C14 30.5 15.5 43 24 50C31 55.5 41 55 47.5 49" stroke="#1b2b6b" stroke-width="5.5" stroke-linecap="round"/>
+            <path d="M45 24C39.5 19.5 31 20.5 26.5 26C22 31.5 23 39.5 28.5 44C33.5 48 40.5 47.5 45 43" stroke="#1b2b6b" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <span class="brand-hero-name">COVIA</span>
+        </div>
+
+        <h1 class="titulo-asistencia">REGISTRO DE ASISTENCIA</h1>
+        <p class="subtitulo-escanear">clic a la camara para escanear</p>
+        <div class="barra-decorativa"></div>
+
+        <form class="form-checada" onsubmit="event.preventDefault();">
+          <div class="input-row">
+            <input
+              type="number"
+              id="empleado_id"
+              class="input-empleado"
+              placeholder="Capture su usuario"
+              inputmode="numeric"
+              autocomplete="off"
+            />
+            <button
+              type="button"
+              class="btn-camara-scan"
+              onclick="abrirEscanerBarras()"
+              title="Escanear gafete de código de barras"
+            >
+              <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </button>
+          </div>
+
+          <div class="botones-accion">
+            <button
+              type="button"
+              id="btn-ingreso"
+              class="btn-checar btn-ingreso"
+              value="1"
+              onclick="checar(1)"
+            >
+              Ingreso
+            </button>
+            <button
+              type="button"
+              id="btn-salida"
+              class="btn-checar btn-salida"
+              value="2"
+              onclick="checar(2)"
+            >
+              Salida
+            </button>
+          </div>
+
+          <div id="mensaje-error" class="mensaje-error-inline"></div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <div id="pantalla-resultado" class="pantalla-resultado">
+    <div class="brand-hero resultado-logo">
+      <svg width="72" height="72" viewBox="0 0 64 64" fill="none">
+        <path d="M44 14C33.5 9.5 20.5 14 15.5 24.5C10.5 35 15 47.5 25.5 52.5C33.5 56.2 42.8 54.2 48.5 48" stroke="#4d78a6" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M49 20C41 12.5 28 13.5 21 22C14 30.5 15.5 43 24 50C31 55.5 41 55 47.5 49" stroke="#1b2b6b" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M45 24C39.5 19.5 31 20.5 26.5 26C22 31.5 23 39.5 28.5 44C33.5 48 40.5 47.5 45 43" stroke="#1b2b6b" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-hero-name" style="font-size: 2.6rem;">COVIA</span>
+    </div>
+
+    <div class="circulo-check">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#091e5b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <p id="texto-resultado" class="texto-resultado">Entrada registrada exitosamente</p>
+  </div>
+
+  <div id="modal-scanner" class="modal-scanner">
+    <div class="scanner-box">
+      <div class="scanner-header">
+        <h4>Escanear Gafete</h4>
+        <button type="button" class="btn-cerrar-scanner" onclick="cerrarEscanerBarras()">Regresar</button>
+      </div>
+      <div id="lector-barras"></div>
+      <p class="scanner-hint">Coloca el código de barras del gafete frente a la cámara</p>
+    </div>
+  </div>
+
+  <video id="camara-frontal" autoplay playsinline muted></video>
+  <canvas id="canvas-foto" width="640" height="480"></canvas>
+
+  <script>
+    const STORAGE_KEY = "token_kiosco";
+    let streamFrontal = null;
+    let html5QrCode = null;
+    let escaneando = false;
+    let audioCtx = null;
+    const cacheAudioUrl = {};
+
+    function actualizarReloj() {
+      const el = document.getElementById("reloj-vivo");
+      if (!el) return;
+      const ahora = new Date();
+      el.textContent = ahora.toLocaleTimeString("es-MX", { hour12: false });
+    }
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+
+    async function precargarVocesFrecuentes() {
+      const frases = [
+        "Entrada registrada exitosamente",
+        "Salida registrada exitosamente"
+      ];
+      for (const frase of frases) {
+        try {
+          const res = await fetch(`/api/tts?texto=${encodeURIComponent(frase)}`);
+          if (res.ok) {
+            const blob = await res.blob();
+            cacheAudioUrl[frase] = URL.createObjectURL(blob);
+          }
+        } catch (e) {}
+      }
+    }
+
+    function reproducirBeep(frecuencia = 1650, duracionMs = 190) {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+
+        const ahora = audioCtx.currentTime;
+        const duracionSeg = duracionMs / 1000;
+
+        const compresor = audioCtx.createDynamicsCompressor();
+        compresor.threshold.setValueAtTime(-12, ahora);
+        compresor.knee.setValueAtTime(10, ahora);
+        compresor.ratio.setValueAtTime(12, ahora);
+        compresor.attack.setValueAtTime(0, ahora);
+        compresor.release.setValueAtTime(0.1, ahora);
+        compresor.connect(audioCtx.destination);
+
+        const oscPrincipal = audioCtx.createOscillator();
+        const oscArmonico = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscPrincipal.type = "square";
+        oscPrincipal.frequency.setValueAtTime(frecuencia, ahora);
+
+        oscArmonico.type = "sawtooth";
+        oscArmonico.frequency.setValueAtTime(frecuencia * 1.5, ahora);
+
+        gainNode.gain.setValueAtTime(0.98, ahora);
+        gainNode.gain.setValueAtTime(0.98, ahora + duracionSeg * 0.85);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ahora + duracionSeg);
+
+        oscPrincipal.connect(gainNode);
+        oscArmonico.connect(gainNode);
+        gainNode.connect(compresor);
+
+        oscPrincipal.start(ahora);
+        oscArmonico.start(ahora);
+        oscPrincipal.stop(ahora + duracionSeg);
+        oscArmonico.stop(ahora + duracionSeg);
+      } catch (err) {}
+    }
+
+    async function hablarConDalia(texto) {
+      if (!texto) return;
+      try {
+        let urlAudio = cacheAudioUrl[texto];
+        if (!urlAudio) {
+          const res = await fetch(`/api/tts?texto=${encodeURIComponent(texto)}`);
+          if (res.ok) {
+            const blob = await res.blob();
+            urlAudio = URL.createObjectURL(blob);
+            cacheAudioUrl[texto] = urlAudio;
+          }
+        }
+        if (urlAudio) {
+          const reproductor = new Audio(urlAudio);
+          reproductor.volume = 1.0;
+          await reproductor.play();
+          return;
+        }
+      } catch (e) {}
+
+      if ("speechSynthesis" in window) {
+        try {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(texto);
+          utterance.lang = "es-MX";
+          utterance.volume = 1.0;
+          utterance.rate = 1.05;
+          const voces = window.speechSynthesis.getVoices();
+          const vozDalia = voces.find(v => /dalia/i.test(v.name)) ||
+                           voces.find(v => /es[-_]MX/i.test(v.lang)) ||
+                           voces.find(v => /^es/i.test(v.lang));
+          if (vozDalia) utterance.voice = vozDalia;
+          window.speechSynthesis.speak(utterance);
+        } catch (errSpeech) {}
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      precargarVocesFrecuentes();
+      const tokenGuardado = localStorage.getItem(STORAGE_KEY);
+      if (tokenGuardado && tokenGuardado.trim() !== "") {
+        desbloquearPantalla();
+      } else {
+        mostrarPantallaBloqueada();
+      }
+    });
+
+    function mostrarPantallaBloqueada() {
+      document.getElementById("pantalla-checador").style.display = "none";
+      document.getElementById("pantalla-bloqueada").style.display = "flex";
+      setTimeout(() => {
+        const input = document.getElementById("input-api-key");
+        if (input) input.focus();
+      }, 100);
+    }
+
+    function desbloquearPantalla() {
+      document.getElementById("pantalla-bloqueada").style.display = "none";
+      document.getElementById("pantalla-checador").style.display = "flex";
+      abrirEscanerBarras();
+    }
+
+    async function guardarYValidarClave(event) {
+      event.preventDefault();
+      const input = document.getElementById("input-api-key");
+      const errorDiv = document.getElementById("auth-error");
+      const btn = document.getElementById("btn-autorizar");
+      const clave = input.value.trim();
+
+      if (!clave) return;
+      errorDiv.textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Verificando...";
+
+      try {
+        const res = await fetch("/api/validar", {
+          method: "POST",
+          headers: { "X-API-Key": clave }
+        });
+
+        if (res.ok) {
+          localStorage.setItem(STORAGE_KEY, clave);
+          reproducirBeep(1500, 160);
+          desbloquearPantalla();
+        } else {
+          errorDiv.textContent = "Clave de autorización incorrecta.";
+          input.value = "";
+          input.focus();
+        }
+      } catch (e) {
+        errorDiv.textContent = "No se pudo conectar con el servidor.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Vincular Dispositivo";
+      }
+    }
+
+    async function iniciarCamaraFrontal() {
+      if (streamFrontal && streamFrontal.active) return streamFrontal;
+      try {
+        streamFrontal = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false
+        });
+        const video = document.getElementById("camara-frontal");
+        video.srcObject = streamFrontal;
+        await video.play();
+        return streamFrontal;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function detenerCamaraFrontal() {
+      if (streamFrontal) {
+        streamFrontal.getTracks().forEach(track => track.stop());
+        streamFrontal = null;
+      }
+    }
+
+    async function capturarFotoFrontalBlob() {
+      const video = document.getElementById("camara-frontal");
+      const canvas = document.getElementById("canvas-foto");
+      const ctx = canvas.getContext("2d");
+
+      if (!streamFrontal || !streamFrontal.active) {
+        await iniciarCamaraFrontal();
+        await new Promise(r => setTimeout(r, 180));
+      }
+
+      if (video && video.readyState >= 2 && video.videoWidth > 0) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      } else {
+        canvas.width = 320;
+        canvas.height = 240;
+        ctx.fillStyle = "#0e2569";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      return new Promise(resolve => {
+        canvas.toBlob(blob => {
+          resolve(blob || new Blob([new Uint8Array([0])], { type: "image/jpeg" }));
+        }, "image/jpeg", 0.85);
+      });
+    }
+
+    function calcularCajaEscaneo(viewfinderWidth, viewfinderHeight) {
+      const width = Math.max(Math.floor(viewfinderWidth * 0.68), 240);
+      const height = Math.max(Math.floor(viewfinderHeight * 0.45), 140);
+      return { width, height };
+    }
+
+    async function abrirEscanerBarras() {
+      if (escaneando) return;
+      const modal = document.getElementById("modal-scanner");
+      modal.classList.add("activo");
+      escaneando = true;
+      detenerCamaraFrontal();
+
+      const configEscaneo = {
+        fps: 20,
+        qrbox: calcularCajaEscaneo
+      };
+
+      const alDetectarCodigo = (codigoDetectado) => {
+        if (!escaneando) return;
+        escaneando = false;
+        reproducirBeep(1750, 190);
+        const input = document.getElementById("empleado_id");
+        input.value = codigoDetectado.trim();
+        cerrarEscanerBarras();
+      };
+
+      try {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("lector-barras");
+        }
+
+        await html5QrCode.start(
+          { facingMode: "user" },
+          configEscaneo,
+          alDetectarCodigo,
+          () => {}
+        );
+      } catch (errUser) {
+        try {
+          await html5QrCode.start(
+            { facingMode: "environment" },
+            configEscaneo,
+            alDetectarCodigo,
+            () => {}
+          );
+        } catch (errEnv) {
+          cerrarEscanerBarras();
+          mostrarError("No se pudo acceder a la cámara para escanear.");
+        }
+      }
+    }
+
+    async function cerrarEscanerBarras() {
+      escaneando = false;
+      const modal = document.getElementById("modal-scanner");
+      modal.classList.remove("activo");
+      if (html5QrCode && html5QrCode.isScanning) {
+        try {
+          await html5QrCode.stop();
+        } catch (e) {}
+      }
+      await iniciarCamaraFrontal();
+      const input = document.getElementById("empleado_id");
+      if (input && !input.value) {
+        input.focus();
+      }
+    }
+
+    function mostrarError(texto) {
+      const div = document.getElementById("mensaje-error");
+      div.textContent = texto;
+      if (texto) {
+        setTimeout(() => {
+          if (div.textContent === texto) div.textContent = "";
+        }, 3500);
+      }
+    }
+
+    function mostrarPantallaBlancaExito(mensaje) {
+      const overlay = document.getElementById("pantalla-resultado");
+      const texto = document.getElementById("texto-resultado");
+      texto.textContent = mensaje;
+      overlay.classList.add("activa");
+
+      setTimeout(() => {
+        overlay.classList.remove("activa");
+        const input = document.getElementById("empleado_id");
+        input.value = "";
+        abrirEscanerBarras();
+      }, 1600);
+    }
+
+    async function checar(claveEvento = 1) {
+      const token = localStorage.getItem(STORAGE_KEY);
+      if (!token) {
+        mostrarPantallaBloqueada();
+        return;
+      }
+
+      const inputEmpleado = document.getElementById("empleado_id");
+      const empleadoId = inputEmpleado.value.trim();
+
+      if (!empleadoId) {
+        mostrarError("Por favor capture o escanee su número de empleado.");
+        inputEmpleado.focus();
+        return;
+      }
+
+      const btnIngreso = document.getElementById("btn-ingreso");
+      const btnSalida = document.getElementById("btn-salida");
+      btnIngreso.disabled = true;
+      btnSalida.disabled = true;
+      mostrarError("");
+
+      try {
+        const fotoBlob = await capturarFotoFrontalBlob();
+        const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+
+        const formData = new FormData();
+        formData.append("empleado_id", empleadoId);
+        formData.append("clave_evento", String(claveEvento));
+        formData.append("evidencia_foto", fotoBlob, `checada_${empleadoId}.jpg`);
+
+        const res = await fetch("/api/checar", {
+          method: "POST",
+          headers: {
+            "X-API-Key": token,
+            "X-Timezone": zonaHoraria
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const textoDefecto = claveEvento === 1
+            ? "Entrada registrada exitosamente"
+            : "Salida registrada exitosamente";
+          const mensajeFinal = data.mensaje || textoDefecto;
+
+          reproducirBeep(1700, 190);
+          setTimeout(() => hablarConDalia(mensajeFinal), 150);
+          mostrarPantallaBlancaExito(mensajeFinal);
+        } else if (res.status === 401) {
+          localStorage.removeItem(STORAGE_KEY);
+          mostrarPantallaBloqueada();
+        } else {
+          mostrarError(data.detail || "Ocurrió un error al registrar la asistencia.");
+        }
+      } catch (e) {
+        mostrarError("Error de conexión con el servidor.");
+      } finally {
+        btnIngreso.disabled = false;
+        btnSalida.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
